@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>css box-sizing</title>
+    <url>/2025/03/03/css-box-sizing/</url>
+    <content><![CDATA[<p><strong>前言</strong></p>
+<pre><code>其实一直没仔细研究过CSS3新增的这个属性box-sizing，只是经常会看到其它网页和公司项目里面有用到这个属性。
+
+要想清楚这个属性的作用，首先要理解盒子模型，盒子模型是指：外边距（margin）+ border（边框） + 内边距（padding）+ content（内容），可以把每一个容器，比如div，都看做是一个盒子模型
+
+比如你给一个div设置宽高为500px，但实际你设置的只是content，之后你又设置了padding:10px;border:1px solid red；
+
+这时div的宽高就会变为544px（content 500px + padding 40px + border 4px）
+相当于一个元素的实际宽高是由：　padding + border + content 组成
+</code></pre>
+<p><strong>定义和用法</strong><br>    box-sizing 属性允许您以特定的方式定义匹配某个区域的特定元素。</p>
+<pre><code>例如，假如您需要并排放置两个带边框的框，可通过将 box-sizing 设置为 &quot;border-box&quot;。这可令浏览器呈现出带有指定宽度和高度的框，并把边框和内边距放入框中。
+
+
+盒子模型会自动根据padding和border的值来调整content的值，就不需要手动调整
+</code></pre>
+<p><strong>一句话总结</strong>：<br>border-box: 元素的总高度和宽度包含内边距和边框(padding 与 border) :<br>default: 元素的总高度和宽度应该加上内边距和边框(padding 与 border) :</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>css定位</title>
+    <url>/2025/02/28/css%E5%AE%9A%E4%BD%8D/</url>
+    <content><![CDATA[<h1 id="CSS-Position"><a href="#CSS-Position" class="headerlink" title="CSS Position"></a>CSS Position</h1><p>position 属性指定了元素的定位类型。</p>
+<p>position 属性的五个值：</p>
+<ul>
+<li>static</li>
+<li>relative</li>
+<li>fixed</li>
+<li>absolute</li>
+<li>sticky</li>
+</ul>
+<p>元素可以使用的顶部，底部，左侧和右侧属性定位。然而，这些属性无法工作，除非事先设定position属性。他们也有不同的工作方式，这取决于定位方法</p>
+<h2 id="static-定位"><a href="#static-定位" class="headerlink" title="static 定位"></a>static 定位</h2><p>HTML 元素的默认值，即没有定位，遵循正常的文档流对象。</p>
+<p>静态定位的元素不会受到 top, bottom, left, right影响。</p>
+<h2 id="fixed-定位"><a href="#fixed-定位" class="headerlink" title="fixed 定位"></a>fixed 定位</h2><p>元素的位置相对于浏览器窗口是固定位置。</p>
+<p>即使窗口是滚动的它也不会移动：</p>
+<blockquote>
+<p>注意： Fixed 定位在 IE7 和 IE8 下需要描述 !DOCTYPE 才能支持。</p>
+</blockquote>
+<p><strong>Fixed定位使元素的位置与文档流无关，因此不占据空间。</strong></p>
+<p>Fixed定位的元素和其他元素重叠。</p>
+<h2 id="relative-定位"><a href="#relative-定位" class="headerlink" title="relative 定位"></a>relative 定位</h2><p>  相对定位元素的定位是相对其正常位置。</p>
+<p><strong>相对相对定位元素，但它原本所占的空间不会改变。</strong></p>
+<blockquote>
+<p>相对定位元素经常被用来作为绝对定位元素的容器块。</p>
+</blockquote>
+<h2 id="absolute-定位"><a href="#absolute-定位" class="headerlink" title="absolute 定位"></a>absolute 定位</h2><p>绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于<html>:</p>
+<p><strong>absolute 定位使元素的位置与文档流无关，因此不占据空间。</strong></p>
+<p>absolute 定位的元素和其他元素重叠。</p>
+<h2 id="sticky-定位"><a href="#sticky-定位" class="headerlink" title="sticky 定位"></a>sticky 定位</h2><p>sticky 英文字面意思是粘，粘贴，所以可以把它称之为粘性定位。</p>
+<p>position: sticky; 基于用户的滚动位置来定位。</p>
+<p>粘性定位的元素是依赖于用户的滚动，在 position:relative 与 position:fixed 定位之间切换。</p>
+<p>它的行为就像 position:relative; 而当页面滚动超出目标区域时，它的表现就像 position:fixed;，它会固定在目标位置。</p>
+<p>元素定位表现为在跨越特定阈值前为相对定位，之后为固定定位。</p>
+<p>这个特定阈值指的是 top, right, bottom 或 left 之一，换言之，指定 top, right, bottom 或 left 四个阈值其中之一，才可使粘性定位生效。否则其行为与相对定位相同。</p>
+<blockquote>
+<p>注意: Internet Explorer, Edge 15 及更早 IE 版本不支持 sticky 定位。 Safari 需要使用 -webkit- prefix (查看以下实例)</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2025/02/28/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>git常见操作</title>
     <url>/2025/03/03/git%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<h1 id="Git操作场景"><a href="#Git操作场景" class="headerlink" title="Git操作场景"></a><center><font color='blue'>Git操作场景</h1><h2 id="1、新建分支做开发"><a href="#1、新建分支做开发" class="headerlink" title=" 1、新建分支做开发"></a><font color='black'> 1、新建分支做开发</h2><p>首先确保本地没有被修改的文件
@@ -81,71 +174,6 @@
       </categories>
       <tags>
         <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2025/02/28/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>css定位</title>
-    <url>/2025/02/28/css%E5%AE%9A%E4%BD%8D/</url>
-    <content><![CDATA[<h1 id="CSS-Position"><a href="#CSS-Position" class="headerlink" title="CSS Position"></a>CSS Position</h1><p>position 属性指定了元素的定位类型。</p>
-<p>position 属性的五个值：</p>
-<ul>
-<li>static</li>
-<li>relative</li>
-<li>fixed</li>
-<li>absolute</li>
-<li>sticky</li>
-</ul>
-<p>元素可以使用的顶部，底部，左侧和右侧属性定位。然而，这些属性无法工作，除非事先设定position属性。他们也有不同的工作方式，这取决于定位方法</p>
-<h2 id="static-定位"><a href="#static-定位" class="headerlink" title="static 定位"></a>static 定位</h2><p>HTML 元素的默认值，即没有定位，遵循正常的文档流对象。</p>
-<p>静态定位的元素不会受到 top, bottom, left, right影响。</p>
-<h2 id="fixed-定位"><a href="#fixed-定位" class="headerlink" title="fixed 定位"></a>fixed 定位</h2><p>元素的位置相对于浏览器窗口是固定位置。</p>
-<p>即使窗口是滚动的它也不会移动：</p>
-<blockquote>
-<p>注意： Fixed 定位在 IE7 和 IE8 下需要描述 !DOCTYPE 才能支持。</p>
-</blockquote>
-<p><strong>Fixed定位使元素的位置与文档流无关，因此不占据空间。</strong></p>
-<p>Fixed定位的元素和其他元素重叠。</p>
-<h2 id="relative-定位"><a href="#relative-定位" class="headerlink" title="relative 定位"></a>relative 定位</h2><p>  相对定位元素的定位是相对其正常位置。</p>
-<p><strong>相对相对定位元素，但它原本所占的空间不会改变。</strong></p>
-<blockquote>
-<p>相对定位元素经常被用来作为绝对定位元素的容器块。</p>
-</blockquote>
-<h2 id="absolute-定位"><a href="#absolute-定位" class="headerlink" title="absolute 定位"></a>absolute 定位</h2><p>绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于<html>:</p>
-<p><strong>absolute 定位使元素的位置与文档流无关，因此不占据空间。</strong></p>
-<p>absolute 定位的元素和其他元素重叠。</p>
-<h2 id="sticky-定位"><a href="#sticky-定位" class="headerlink" title="sticky 定位"></a>sticky 定位</h2><p>sticky 英文字面意思是粘，粘贴，所以可以把它称之为粘性定位。</p>
-<p>position: sticky; 基于用户的滚动位置来定位。</p>
-<p>粘性定位的元素是依赖于用户的滚动，在 position:relative 与 position:fixed 定位之间切换。</p>
-<p>它的行为就像 position:relative; 而当页面滚动超出目标区域时，它的表现就像 position:fixed;，它会固定在目标位置。</p>
-<p>元素定位表现为在跨越特定阈值前为相对定位，之后为固定定位。</p>
-<p>这个特定阈值指的是 top, right, bottom 或 left 之一，换言之，指定 top, right, bottom 或 left 四个阈值其中之一，才可使粘性定位生效。否则其行为与相对定位相同。</p>
-<blockquote>
-<p>注意: Internet Explorer, Edge 15 及更早 IE 版本不支持 sticky 定位。 Safari 需要使用 -webkit- prefix (查看以下实例)</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>CSS</tag>
       </tags>
   </entry>
   <entry>
