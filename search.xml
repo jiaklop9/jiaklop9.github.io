@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>git常见操作</title>
+    <url>/2025/03/03/git%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h1 id="Git操作场景"><a href="#Git操作场景" class="headerlink" title="Git操作场景"></a><center><font color='blue'>Git操作场景</h1><h2 id="1、新建分支做开发"><a href="#1、新建分支做开发" class="headerlink" title=" 1、新建分支做开发"></a><font color='black'> 1、新建分支做开发</h2><p>首先确保本地没有被修改的文件
+	</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git checkout -b fa_&#123;branch_name&#125;</span><br><span class="line">edit</span><br><span class="line">git add -A &amp;&amp; git commit -m &quot;comment ...&quot;</span><br><span class="line">git push -u presandbox fa&#123;branch_name&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、别人已经新建分支（我本地没有该分支，需要做后续开发）"><a href="#2、别人已经新建分支（我本地没有该分支，需要做后续开发）" class="headerlink" title="2、别人已经新建分支（我本地没有该分支，需要做后续开发）"></a>2、别人已经新建分支（我本地没有该分支，需要做后续开发）</h2><ol>
+<li>首先确保本地没有被修改的文件</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git checkout master &amp;&amp; git pull presandbox</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>查看所有的远端开发分支</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git branch -r  </span><br><span class="line">git checkout -b fa&#123;branch_name&#125; --trace presandbox/fa&#123;branch_name&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据业务需求，修改相应的文件和代码 。。。</p>
+</li>
+<li><p>对修改完毕的代码做本地测试，如果没有问题的话，使用下面的代码做本地提交</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add -A &amp;&amp; git commit-m &quot;commit code for ...&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为了可以和其他人共享你的代码修改，请执行以下命令</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git push presandbox fa&#123;branch_name&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意服务器可能会reject你的代码，如果是被reject的话，参考Merge</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="3、别人已经新建分支，我在本地有该分支，我需要做后续开发"><a href="#3、别人已经新建分支，我在本地有该分支，我需要做后续开发" class="headerlink" title="3、别人已经新建分支，我在本地有该分支，我需要做后续开发"></a>3、别人已经新建分支，我在本地有该分支，我需要做后续开发</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git checkout fa&#123;branch_name&#125;</span><br><span class="line">git pull presandbox fa&#123;branch_name&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据业务需求组，修改相应的代码和文件 。。。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">修改完毕的代码做本地测试，如果没有问题的话，使用下面的代码做本地提交</span><br><span class="line">git add -A &amp;&amp; git commit-m &quot;commit code for ...&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4、-为了可以和其他人共享你的代码修改，请执行以下命令"><a href="#4、-为了可以和其他人共享你的代码修改，请执行以下命令" class="headerlink" title="4、 为了可以和其他人共享你的代码修改，请执行以下命令"></a>4、 为了可以和其他人共享你的代码修改，请执行以下命令</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git push presandbox fa&#123;branch_name&#125;</span><br><span class="line">注意服务器可能会reject你的代码，如果是被reject的话，参考Merge</span><br></pre></td></tr></table></figure>
+
+<h2 id="5、Merge代码"><a href="#5、Merge代码" class="headerlink" title="5、Merge代码"></a>5、Merge代码</h2><ol>
+<li><font color='black'> 如果在提交代码是被reject的话，执行下面命令做merge(合并)</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pull presandbox fa&#123;branc_name&#125;</span><br><span class="line">请仔细阅读改命令的输出：</span><br><span class="line">输出会有类似conflict的字样，对每一个标注conflict的文件，仔细阅读其内容，然后把不需要的代码删除，保留最终的代码</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>修改了文件，但是分支不对</p>
+</li>
+<li><p>例如：在master上修改了文件，在某个分支上修改了文件</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">* 新建临时分支</span><br><span class="line">* git checkout -b temp_new_branch</span><br><span class="line">* 将文件改动保存到新的临时分支下</span><br><span class="line">* git add -A &amp;&amp; git commit -m &quot;add all change to new branch&quot;</span><br><span class="line">* 没有新的正确的分支，新建正确的分支</span><br><span class="line">* git checkout master &amp;&amp; git checkout -b fa&#123;branch_name&#125;</span><br><span class="line">* 否则 git checkout fa&#123;right_branch&#125;</span><br><span class="line">* 从临时分支获取最新的改动</span><br><span class="line">* git merge temp_new_branch  ## 如果有冲突参考上边的做法</span><br><span class="line">* 保存最新的改动到正确的分支</span><br><span class="line">* git add -A &amp;&amp; git commit -m &quot;append all changes back to right branch&quot;</span><br><span class="line">* 删除临时分支</span><br><span class="line">* git branch -D temp_new_branch</span><br></pre></td></tr></table></figure>
+
+<h2 id="6、删除无用的文件夹"><a href="#6、删除无用的文件夹" class="headerlink" title="6、删除无用的文件夹"></a>6、删除无用的文件夹</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git rm -r --cached xxx</span><br></pre></td></tr></table></figure>
+
+<h2 id="7、合并某分支上的某次提交"><a href="#7、合并某分支上的某次提交" class="headerlink" title="7、合并某分支上的某次提交"></a>7、合并某分支上的某次提交</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git cherry-pick commitid</span><br></pre></td></tr></table></figure>
+
+<h2 id="8、获取远程最新更新"><a href="#8、获取远程最新更新" class="headerlink" title="8、获取远程最新更新"></a>8、获取远程最新更新</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git fetch</span><br><span class="line">本地已有修改的话： TODO待验证</span><br><span class="line">1. git stash</span><br><span class="line">2. git fetch</span><br><span class="line">3. git stash pop</span><br></pre></td></tr></table></figure>
+
+<h2 id="9、版本回退"><a href="#9、版本回退" class="headerlink" title="9、版本回退"></a>9、版本回退</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git revert commitid</span><br></pre></td></tr></table></figure>
+
+<h2 id="10、如果在提交（commit）之后发现需要进行修改或追加工作"><a href="#10、如果在提交（commit）之后发现需要进行修改或追加工作" class="headerlink" title="10、如果在提交（commit）之后发现需要进行修改或追加工作"></a>10、如果在提交（commit）之后发现需要进行修改或追加工作</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit -amend</span><br><span class="line">1. 已push的</span><br><span class="line">2. 未push的都可以修改</span><br><span class="line">3. 历史提交信息请Google</span><br><span class="line">	</span><br><span class="line">如果只追加之前的修改，而不修改提交信息</span><br><span class="line">git commit --amend --no-edit</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="11、修改远程仓库，连接到新地址"><a href="#11、修改远程仓库，连接到新地址" class="headerlink" title="11、修改远程仓库，连接到新地址"></a>11、修改远程仓库，连接到新地址</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git remote set-url origin url</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="12、删除远程分支"><a href="#12、删除远程分支" class="headerlink" title="12、删除远程分支"></a>12、删除远程分支</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git push origin -d branch_name</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="13、本地修改后，提交之前，pull远程代码，保持树干净"><a href="#13、本地修改后，提交之前，pull远程代码，保持树干净" class="headerlink" title="13、本地修改后，提交之前，pull远程代码，保持树干净"></a>13、本地修改后，提交之前，pull远程代码，保持树干净</h2><p>必须要在 git add . &amp;&amp; git commit -m “”之前执行以下操作。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">储藏</span></span><br><span class="line">git stash save &quot;msg&quot;</span><br><span class="line">git pull origin branch</span><br><span class="line">git stash pop/git stash apply stash@&#123;index&#125;</span><br></pre></td></tr></table></figure>
+<p>删除指定index的储藏</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git stash drop stash@&#123;index&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="14、-其他分支的单个文件覆盖当前分支的对应文件"><a href="#14、-其他分支的单个文件覆盖当前分支的对应文件" class="headerlink" title="14、 其他分支的单个文件覆盖当前分支的对应文件"></a>14、 其他分支的单个文件覆盖当前分支的对应文件</h2><p>切换到要被覆盖的分支</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git checkout dst_branch</span><br></pre></td></tr></table></figure>
+<p>执行覆盖命令</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git checkout file_from_branch  file</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="15、-列出项目所有标签"><a href="#15、-列出项目所有标签" class="headerlink" title="15、 列出项目所有标签"></a>15、 列出项目所有标签</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git tag -n</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2025/02/28/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
