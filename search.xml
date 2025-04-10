@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>css box-sizing</title>
-    <url>/2025/03/03/css-box-sizing/</url>
-    <content><![CDATA[<p><strong>前言</strong></p>
-<pre><code>其实一直没仔细研究过CSS3新增的这个属性box-sizing，只是经常会看到其它网页和公司项目里面有用到这个属性。
-</code></pre>
-<p>要想清楚这个属性的作用，首先要理解盒子模型，盒子模型是指：外边距（margin）+ border（边框） + 内边距（padding）+ content（内容），可以把每一个容器，比如div，都看做是一个盒子模型</p>
-<p>比如你给一个div设置宽高为500px，但实际你设置的只是content，之后你又设置了padding:10px;border:1px solid red；</p>
-<p>这时div的宽高就会变为544px（content 500px + padding 40px + border 4px）<br>相当于一个元素的实际宽高是由：　padding + border + content 组成</p>
-<p><strong>定义和用法</strong><br>    box-sizing 属性允许您以特定的方式定义匹配某个区域的特定元素。</p>
-<p>例如，假如您需要并排放置两个带边框的框，可通过将 box-sizing 设置为 “border-box”。这可令浏览器呈现出带有指定宽度和高度的框，并把边框和内边距放入框中。</p>
-<p>盒子模型会自动根据padding和border的值来调整content的值，就不需要手动调整</p>
-<p><strong>一句话总结</strong>：<br>border-box: 元素的总高度和宽度包含内边距和边框(padding 与 border) :<br>default: 元素的总高度和宽度应该加上内边距和边框(padding 与 border) :</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>CSS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JS中的栈和堆是什么？优缺点?</title>
     <url>/2025/04/07/JS%E4%B8%AD%E7%9A%84%E6%A0%88%E5%92%8C%E5%A0%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
     <content><![CDATA[<p>理解 JavaScript 中的栈（stack）和堆（heap）是理解 JavaScript 内存管理的关键。栈和堆是两种不同的内存分配方式，用于存储数据和变量。在本文中，我将详细解释栈和堆的概念、优缺点，并提供示例代码片段来帮助读者更好地理解。</p>
@@ -129,6 +108,40 @@
       </tags>
   </entry>
   <entry>
+    <title>css box-sizing</title>
+    <url>/2025/03/03/css-box-sizing/</url>
+    <content><![CDATA[<p><strong>前言</strong></p>
+<pre><code>其实一直没仔细研究过CSS3新增的这个属性box-sizing，只是经常会看到其它网页和公司项目里面有用到这个属性。
+</code></pre>
+<p>要想清楚这个属性的作用，首先要理解盒子模型，盒子模型是指：外边距（margin）+ border（边框） + 内边距（padding）+ content（内容），可以把每一个容器，比如div，都看做是一个盒子模型</p>
+<p>比如你给一个div设置宽高为500px，但实际你设置的只是content，之后你又设置了padding:10px;border:1px solid red；</p>
+<p>这时div的宽高就会变为544px（content 500px + padding 40px + border 4px）<br>相当于一个元素的实际宽高是由：　padding + border + content 组成</p>
+<p><strong>定义和用法</strong><br>    box-sizing 属性允许您以特定的方式定义匹配某个区域的特定元素。</p>
+<p>例如，假如您需要并排放置两个带边框的框，可通过将 box-sizing 设置为 “border-box”。这可令浏览器呈现出带有指定宽度和高度的框，并把边框和内边距放入框中。</p>
+<p>盒子模型会自动根据padding和border的值来调整content的值，就不需要手动调整</p>
+<p><strong>一句话总结</strong>：<br>border-box: 元素的总高度和宽度包含内边距和边框(padding 与 border) :<br>default: 元素的总高度和宽度应该加上内边距和边框(padding 与 border) :</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>flask模板变量统一配置</title>
+    <url>/2025/04/10/flask%E6%A8%A1%E6%9D%BF%E5%8F%98%E9%87%8F%E7%BB%9F%E4%B8%80%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>在函数内部，使用 @app.context_processor 装饰器定义了一个名为 make_template_context 的函数。这个装饰器的作用是注册一个上下文处理器，使其返回的变量在所有模板中全局可用。<br>参考代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">register_template_context</span>(<span class="params">app</span>):</span><br><span class="line"><span class="meta">    @app.context_processor</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">make_template_context</span>():</span><br><span class="line">        admin = Admin.query.first()</span><br><span class="line">        categories = Category.query.order_by(Category.name).<span class="built_in">all</span>()</span><br><span class="line">        links = Link.query.order_by(Link.name).<span class="built_in">all</span>()</span><br><span class="line">        <span class="keyword">if</span> current_user.is_authenticated:</span><br><span class="line">            unread_comments = Comment.query.filter_by(reviewed=<span class="literal">False</span>).count()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            unread_comments = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">dict</span>(</span><br><span class="line">            admin=admin, categories=categories,</span><br><span class="line">            links=links, unread_comments=unread_comments)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>flask</category>
+      </categories>
+      <tags>
+        <tag>flask</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2025/02/28/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -147,6 +160,21 @@
 ]]></content>
   </entry>
   <entry>
+    <title>flask 数据库查询监控</title>
+    <url>/2025/04/10/flask-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%E7%9B%91%E6%8E%A7/</url>
+    <content><![CDATA[<p>In debug mode Flask-SQLAlchemy will log all the SQL queries sent<br>to the database.  This information is available until the end of request<br>which makes it possible to easily ensure that the SQL generated is the<br>one expected on errors or in unittesting.  If you don’t want to enable<br>the DEBUG mode for your unittests you can also enable the query<br>recording by setting the <code>&#39;SQLALCHEMY_RECORD_QUERIES&#39;</code> config variable<br>to <code>True</code>.  This is automatically enabled if Flask is in testing mode.</p>
+<p>The value returned will be a list of named tuples with the following<br>attributes:</p>
+<p>example:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">register_request_handlers</span>(<span class="params">app</span>):</span><br><span class="line"><span class="meta">    @app.after_request</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">query_profiler</span>(<span class="params">response</span>):</span><br><span class="line">        <span class="keyword">for</span> q <span class="keyword">in</span> get_debug_queries():</span><br><span class="line">            <span class="keyword">if</span> q.duration &gt;= app.config[<span class="string">&#x27;BLUELOG_SLOW_QUERY_THRESHOLD&#x27;</span>]:</span><br><span class="line">                app.logger.warning(</span><br><span class="line">                    <span class="string">&#x27;Slow query: Duration: %fs\n Context: %s\nQuery: %s\n &#x27;</span></span><br><span class="line">                    % (q.duration, q.context, q.statement)</span><br><span class="line">                )</span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>flask</category>
+      </categories>
+      <tags>
+        <tag>flask</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo常用命令</title>
     <url>/2025/03/03/hexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">hexo new &quot;name&quot;       # 新建文章</span><br><span class="line">hexo new page &quot;name&quot;  # 新建页面</span><br><span class="line">hexo g                # 生成页面</span><br><span class="line">hexo d                # 部署</span><br><span class="line">hexo g -d             # 生成页面并部署</span><br><span class="line">hexo s                # 本地预览</span><br><span class="line">hexo clean            # 清除缓存和已生成的静态文件</span><br><span class="line">hexo <span class="built_in">help</span>             # 帮助</span><br></pre></td></tr></table></figure>]]></content>
@@ -155,18 +183,6 @@
       </categories>
       <tags>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>事件冒泡</title>
-    <url>/2025/03/10/%E4%BA%8B%E4%BB%B6%E5%86%92%E6%B3%A1/</url>
-    <content><![CDATA[<h1 id="事件冒泡定义"><a href="#事件冒泡定义" class="headerlink" title="事件冒泡定义"></a>事件冒泡定义</h1><p>子元素触发事件时，所有的祖先元素都会触发相同的事件</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>js</tag>
       </tags>
   </entry>
   <entry>
@@ -250,6 +266,18 @@
       </categories>
       <tags>
         <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>事件冒泡</title>
+    <url>/2025/03/10/%E4%BA%8B%E4%BB%B6%E5%86%92%E6%B3%A1/</url>
+    <content><![CDATA[<h1 id="事件冒泡定义"><a href="#事件冒泡定义" class="headerlink" title="事件冒泡定义"></a>事件冒泡定义</h1><p>子元素触发事件时，所有的祖先元素都会触发相同的事件</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
       </tags>
   </entry>
 </search>
