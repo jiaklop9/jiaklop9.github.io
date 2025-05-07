@@ -756,13 +756,176 @@
   <entry>
     <title>web逆向: md5</title>
     <url>/2025/04/17/web%E9%80%86%E5%90%91-md5/</url>
-    <content><![CDATA[<p>md5加密字符串一般长度为16或者32</p>
+    <content><![CDATA[<h2 id="md5加密字符串一般长度为16或者32"><a href="#md5加密字符串一般长度为16或者32" class="headerlink" title="md5加密字符串一般长度为16或者32"></a>md5加密字符串一般长度为16或者32</h2><h2 id="函数跳转，鼠标放上去，出现后点击"><a href="#函数跳转，鼠标放上去，出现后点击" class="headerlink" title="函数跳转，鼠标放上去，出现后点击"></a>函数跳转，鼠标放上去，出现后点击</h2><h2 id="HttpOnly含义"><a href="#HttpOnly含义" class="headerlink" title="HttpOnly含义"></a>HttpOnly含义</h2><p>生成cookie时使用HttpOnly标志有助于降低客户端脚本访问受保护cookie的风险（如果浏览器支持）。<br>这个意思就是说，如果某一个Cookie 选项被设置成 HttpOnly &#x3D; true 的话，那此Cookie 只能通过服务器端修改，Js 是操作不了的，对于 document.cookie 来说是透明的。</p>
+<h1 id="acw-tc-ktas-v0-report-set-cookie"><a href="#acw-tc-ktas-v0-report-set-cookie" class="headerlink" title="acw_tc &#x3D; &#x2F;ktas&#x2F;v0&#x2F;report set_cookie"></a>acw_tc &#x3D; &#x2F;ktas&#x2F;v0&#x2F;report set_cookie</h1><h2 id="Object-xx-含义"><a href="#Object-xx-含义" class="headerlink" title="Object(xx) 含义"></a>Object(xx) 含义</h2><p>在JavaScript中，Object(d.a) 这种写法是一种显式类型转换（type coercion），它的作用是将 d.a 的值转换为一个对象（Object）。具体行为如下：</p>
+<h3 id="1-如果-d-a-是原始值（primitive）："><a href="#1-如果-d-a-是原始值（primitive）：" class="headerlink" title="1. 如果 d.a 是原始值（primitive）："></a>1. 如果 d.a 是原始值（primitive）：</h3><p>比如字符串、数字、布尔值、null、undefined 等，Object() 会将其包装成对应的包装对象：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Object</span>(<span class="string">&quot;hello&quot;</span>)  <span class="comment">// String &#123;&quot;hello&quot;&#125; （包装成字符串对象）</span></span><br><span class="line"><span class="title class_">Object</span>(<span class="number">123</span>)     <span class="comment">// Number &#123;123&#125; （包装成数字对象）</span></span><br><span class="line"><span class="title class_">Object</span>(<span class="literal">true</span>)    <span class="comment">// Boolean &#123;true&#125; （包装成布尔对象）</span></span><br></pre></td></tr></table></figure>
+<p>例外：</p>
+<p>null 和 undefined 会转换为一个空对象：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Object</span>(<span class="literal">null</span>)      <span class="comment">// &#123;&#125; （空对象）</span></span><br><span class="line"><span class="title class_">Object</span>(<span class="literal">undefined</span>) <span class="comment">// &#123;&#125; （空对象）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-如果-d-a-已经是对象："><a href="#2-如果-d-a-已经是对象：" class="headerlink" title="2. 如果 d.a 已经是对象："></a>2. 如果 d.a 已经是对象：</h3><p>Object() 会直接返回该对象本身（不做任何转换）：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123; <span class="attr">name</span>: <span class="string">&quot;test&quot;</span> &#125;;</span><br><span class="line"><span class="title class_">Object</span>(obj) === obj  <span class="comment">// true （返回原对象）</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-为什么这样写？"><a href="#3-为什么这样写？" class="headerlink" title="3. 为什么这样写？"></a>3. 为什么这样写？</h3><p>确保结果是一个对象（避免原始值无法调用方法或访问属性）。</p>
+<p>防御性编程：处理可能的 null&#x2F;undefined，将其转换为空对象 {}。</p>
+<p>举例：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> d = &#123; <span class="attr">a</span>: <span class="string">&quot;hello&quot;</span> &#125;;</span><br><span class="line"><span class="title class_">Object</span>(d.<span class="property">a</span>).<span class="title function_">toString</span>(); <span class="comment">// 安全调用方法（虽然字符串原始值本身也有方法）</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-常见类似用法："><a href="#4-常见类似用法：" class="headerlink" title="4. 常见类似用法："></a>4. 常见类似用法：</h3><p>Object.assign(target, source) 中，如果 source 是原始值，会先被 Object() 转换。</p>
+<p>与 new Object() 的区别：Object() 作为函数调用时，行为更灵活（无需 new）。</p>
+<h3 id="5-新生建议："><a href="#5-新生建议：" class="headerlink" title="5. 新生建议："></a>5. 新生建议：</h3><p>优先使用更明确的类型转换（如 String()、Number() 等），除非需要处理不确定的输入。<br>避免过度依赖隐式转换，容易引发 bug。</p>
 ]]></content>
       <categories>
         <category>web逆向</category>
       </categories>
       <tags>
         <tag>web逆向</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>English:250507</title>
+    <url>/2025/05/07/English-250507/</url>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>单词</th>
+<th>词性</th>
+<th>解释</th>
+<th>例句</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>evaluate</td>
+<td>verb</td>
+<td>评估、执行</td>
+<td>evaluate script on the page.</td>
+</tr>
+<tr>
+<td>shorthands</td>
+<td>n</td>
+<td>速记、简写</td>
+<td>Pyppeteer also has shorthands for these methods</td>
+</tr>
+<tr>
+<td>catch up</td>
+<td>n</td>
+<td>赶上</td>
+<td>catch up development of puppeteer</td>
+</tr>
+<tr>
+<td>credits</td>
+<td>n</td>
+<td>致谢</td>
+<td></td>
+</tr>
+<tr>
+<td>shortcut</td>
+<td>n</td>
+<td>捷径、近路、快捷方式</td>
+<td>This function is a shortcut to Launcher</td>
+</tr>
+<tr>
+<td>deprecated</td>
+<td>verb</td>
+<td>已弃用</td>
+<td></td>
+</tr>
+<tr>
+<td>bundle</td>
+<td>verb</td>
+<td>捆绑</td>
+<td>Pyppeteer can also be used to control the Chrome browser, but it works best with the version of Chromium it is bundled with</td>
+</tr>
+<tr>
+<td>incognito</td>
+<td>adj、adv、n</td>
+<td>隐身、匿名</td>
+<td>Create a new incognito browser context.</td>
+</tr>
+<tr>
+<td>context</td>
+<td>n</td>
+<td>背景、上下文</td>
+<td>create a new incognito browser context.</td>
+</tr>
+<tr>
+<td>archive</td>
+<td>n</td>
+<td>档案</td>
+<td>Archive notice（存档通知，存档公告。这个短语通常用于描述一种正式的文件或信息，表明某些资料或记录已经被存档，并且可能不再作为日常参考使用，但仍然被保存以备将来需要时查阅。在不同的上下文中，它也可能被称为 “存档公告” 或 “档案通知”。）</td>
+</tr>
+<tr>
+<td>score</td>
+<td>n</td>
+<td>分数</td>
+<td></td>
+</tr>
+<tr>
+<td>Stock</td>
+<td>n</td>
+<td>库存(通常用于指代商品、材料或产品的库存)</td>
+<td>The company has a large stock of raw materials.”（公司拥有大量的原材料库存。</td>
+</tr>
+<tr>
+<td>employee</td>
+<td>n</td>
+<td>雇佣、采用</td>
+<td></td>
+</tr>
+<tr>
+<td>a handful of important</td>
+<td></td>
+<td>一些重要的</td>
+<td>Bootstrap employs a handful of important global styles and settings that you’ll need to be aware of when using it</td>
+</tr>
+<tr>
+<td>strategy</td>
+<td>n</td>
+<td>谋划、策略</td>
+<td>｜</td>
+</tr>
+<tr>
+<td>optimize</td>
+<td>v</td>
+<td>优化</td>
+<td>to optimize viewing conditions（优化观察条件）</td>
+</tr>
+<tr>
+<td>oriten</td>
+<td>n</td>
+<td>方向</td>
+<td></td>
+</tr>
+<tr>
+<td>aftermath</td>
+<td>n</td>
+<td>战争、事故、不快的事情的后果</td>
+<td></td>
+</tr>
+<tr>
+<td>bootcamp</td>
+<td></td>
+<td>训练营</td>
+<td></td>
+</tr>
+<tr>
+<td>graphs</td>
+<td>n</td>
+<td>图表</td>
+<td></td>
+</tr>
+<tr>
+<td>evolution</td>
+<td>n</td>
+<td>进化</td>
+<td></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>English</category>
+      </categories>
+      <tags>
+        <tag>English</tag>
       </tags>
   </entry>
 </search>
