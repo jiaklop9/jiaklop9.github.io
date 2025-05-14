@@ -1326,4 +1326,29 @@
         <tag>科普</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Docker: 银河麒麟操作系统 v10 中离线安装</title>
+    <url>/2025/05/14/Docker-%E9%93%B6%E6%B2%B3%E9%BA%92%E9%BA%9F%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-v10-%E4%B8%AD%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="银河麒麟操作系统-v10-中离线安装-Docker"><a href="#银河麒麟操作系统-v10-中离线安装-Docker" class="headerlink" title="银河麒麟操作系统 v10 中离线安装 Docker"></a>银河麒麟操作系统 v10 中离线安装 Docker</h1><h2 id="1-查看系统版本"><a href="#1-查看系统版本" class="headerlink" title="1. 查看系统版本"></a>1. 查看系统版本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@localhost opt]# cat /etc/os-release</span><br><span class="line">NAME=&quot;Kylin Linux Advanced Server&quot;</span><br><span class="line">VERSION=&quot;V10 (Lance)&quot;</span><br><span class="line">ID=&quot;kylin&quot;</span><br><span class="line">VERSION_ID=&quot;V10&quot;</span><br><span class="line">PRETTY_NAME=&quot;Kylin Linux Advanced Server V10 (Lance)&quot;</span><br><span class="line">ANSI_COLOR=&quot;0;31&quot;</span><br><span class="line">[root@localhost opt]#</span><br></pre></td></tr></table></figure>
+<h2 id="2-查看Linux内核版本"><a href="#2-查看Linux内核版本" class="headerlink" title="2. 查看Linux内核版本"></a>2. 查看Linux内核版本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@localhost opt]# uname -r</span><br><span class="line">4.19.90-52.22.v2207.ky10.aarch64</span><br><span class="line">[root@localhost opt]# uname -a</span><br><span class="line">Linux localhost.localdomain 4.19.90-52.22.v2207.ky10.aarch64 #1 SMP Tue Mar 14 11:52:45 CST 2023 aarch64 aarch64 aarch64 GNU/Linux</span><br><span class="line">[root@localhost opt]# </span><br></pre></td></tr></table></figure>
+<h2 id="3-查看iptables版本"><a href="#3-查看iptables版本" class="headerlink" title="3. 查看iptables版本"></a>3. 查看iptables版本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@localhost opt]# iptables --version</span><br><span class="line">iptables v1.8.5 (legacy)</span><br></pre></td></tr></table></figure>
+<h2 id="4-判断处理器架构"><a href="#4-判断处理器架构" class="headerlink" title="4. 判断处理器架构"></a>4. 判断处理器架构</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@localhost opt]# uname -p</span><br><span class="line">aarch64</span><br><span class="line">[root@localhost opt]# </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可以看到，系统处理器架构为 ARM 架构；如果为 x86 架构的，则会显示 x86_64;</p>
+</blockquote>
+<h2 id="5-离线下载docker包"><a href="#5-离线下载docker包" class="headerlink" title="5. 离线下载docker包"></a>5. 离线下载docker包</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">https://download.docker.com/linux/static/stable/</span><br></pre></td></tr></table></figure>
+<h2 id="6-解压并移动"><a href="#6-解压并移动" class="headerlink" title="6. 解压并移动"></a>6. 解压并移动</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar -zxvf docker-20.10.6.tgz</span><br><span class="line">mv docker/* /usr/bin/</span><br></pre></td></tr></table></figure>
+<h2 id="7-配置docker文件"><a href="#7-配置docker文件" class="headerlink" title="7.  配置docker文件"></a>7.  配置docker文件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">//新建配置文件</span><br><span class="line">vi /usr/lib/systemd/system/docker.service</span><br><span class="line"></span><br><span class="line">//docker.service文件中写入如下内容</span><br><span class="line">[Unit]</span><br><span class="line">Description=Docker Application Container Engine</span><br><span class="line">Documentation=https://docs.docker.com</span><br><span class="line">After=network-online.target firewalld.service</span><br><span class="line">Wants=network-online.target</span><br><span class="line">[Service]</span><br><span class="line">Type=notify</span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line">ExecReload=/bin/kill -s HUP $MAINPID</span><br><span class="line">LimitNOFILE=infinity</span><br><span class="line">LimitNPROC=infinity</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">Delegate=yes</span><br><span class="line">KillMode=process</span><br><span class="line">Restart=on-failure</span><br><span class="line">StartLimitBurst=3</span><br><span class="line">StartLimitInterval=60s</span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"></span><br><span class="line">// 给与可执行权限</span><br><span class="line">chmod +x /usr/lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-查看docker信息"><a href="#8-查看docker信息" class="headerlink" title="8. 查看docker信息"></a>8. 查看docker信息</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker info</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
 </search>
