@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>正向代理VS反向代理 | jiaklop9</title><meta name="author" content="jiaklop9"><meta name="copyright" content="jiaklop9"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="🛰️ 正向代理 vs 反向代理（通俗理解）📌 概念对比表   项目 正向代理 反向代理    谁发起使用？ 客户端（用户自己配置） 服务端（自动代理到后端）   被隐藏的是谁？ 客户端 后端服务器   应用场景 科学上网、绕过墙 负载均衡、隐藏真实后端   示例 VPN、HTTP代理 Nginx、Apache 反向代理   用户访问的是什么 代理服务器 代理服务器   代理服务器转发给 目标网">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正向代理VS反向代理">
+<meta property="og:url" content="http://jiaklop9.github.io/2025/04/22/%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86VS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="jiaklop9">
+<meta property="og:description" content="🛰️ 正向代理 vs 反向代理（通俗理解）📌 概念对比表   项目 正向代理 反向代理    谁发起使用？ 客户端（用户自己配置） 服务端（自动代理到后端）   被隐藏的是谁？ 客户端 后端服务器   应用场景 科学上网、绕过墙 负载均衡、隐藏真实后端   示例 VPN、HTTP代理 Nginx、Apache 反向代理   用户访问的是什么 代理服务器 代理服务器   代理服务器转发给 目标网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://jiaklop9.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2025-04-22T07:15:32.000Z">
+<meta property="article:modified_time" content="2026-05-08T23:56:40.535Z">
+<meta property="article:author" content="jiaklop9">
+<meta property="article:tag" content="科普">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://jiaklop9.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "正向代理VS反向代理",
+  "url": "http://jiaklop9.github.io/2025/04/22/%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86VS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/",
+  "image": "http://jiaklop9.github.io/img/avatar.jpg",
+  "datePublished": "2025-04-22T07:15:32.000Z",
+  "dateModified": "2026-05-08T23:56:40.535Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "jiaklop9",
+      "url": "http://jiaklop9.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://jiaklop9.github.io/2025/04/22/%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86VS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":-1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '正向代理VS反向代理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/index.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.jpg" alt="Logo"><span class="site-name">jiaklop9</span></a><a class="nav-page-title" href="/"><span class="site-name">正向代理VS反向代理</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">正向代理VS反向代理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-22T07:15:32.000Z" title="发表于 2025-04-22 15:15:32">2025-04-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-08T23:56:40.535Z" title="更新于 2026-05-09 07:56:40">2026-05-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%A7%91%E6%99%AE/">科普</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="🛰️-正向代理-vs-反向代理（通俗理解）"><a href="#🛰️-正向代理-vs-反向代理（通俗理解）" class="headerlink" title="🛰️ 正向代理 vs 反向代理（通俗理解）"></a>🛰️ 正向代理 vs 反向代理（通俗理解）</h1><h2 id="📌-概念对比表"><a href="#📌-概念对比表" class="headerlink" title="📌 概念对比表"></a>📌 概念对比表</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>正向代理</th>
+<th>反向代理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>谁发起使用？</td>
+<td>客户端（用户自己配置）</td>
+<td>服务端（自动代理到后端）</td>
+</tr>
+<tr>
+<td>被隐藏的是谁？</td>
+<td>客户端</td>
+<td>后端服务器</td>
+</tr>
+<tr>
+<td>应用场景</td>
+<td>科学上网、绕过墙</td>
+<td>负载均衡、隐藏真实后端</td>
+</tr>
+<tr>
+<td>示例</td>
+<td>VPN、HTTP代理</td>
+<td>Nginx、Apache 反向代理</td>
+</tr>
+<tr>
+<td>用户访问的是什么</td>
+<td>代理服务器</td>
+<td>代理服务器</td>
+</tr>
+<tr>
+<td>代理服务器转发给</td>
+<td>目标网站</td>
+<td>实际后端服务（如 Flask）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-正向代理（Forward-Proxy）"><a href="#🎯-正向代理（Forward-Proxy）" class="headerlink" title="🎯 正向代理（Forward Proxy）"></a>🎯 正向代理（Forward Proxy）</h2><blockquote>
+<p><strong>帮你访问你访问不到的网站</strong></p>
+</blockquote>
+<pre class="mermaid">sequenceDiagram
+    participant 用户
+    participant 代理服务器
+    participant 谷歌
+
+    用户->>代理服务器: 我要访问 Google
+    代理服务器->>谷歌: 用户请求（代发）
+    谷歌-->>代理服务器: 响应内容
+    代理服务器-->>用户: 返回数据</pre>
+
+<h3 id="🔍-特点"><a href="#🔍-特点" class="headerlink" title="🔍 特点"></a>🔍 特点</h3><ul>
+<li>客户端配置代理</li>
+<li>代理“伪装”你去访问外部</li>
+<li>被服务端看到的是“代理”，不是你</li>
+</ul>
+<h3 id="🛠-用途"><a href="#🛠-用途" class="headerlink" title="🛠 用途"></a>🛠 用途</h3><ul>
+<li>科学上网</li>
+<li>绕过防火墙</li>
+<li>限制 IP 访问（如只允许代理服务器的 IP）</li>
+</ul>
+<hr>
+<h2 id="🎯-反向代理（Reverse-Proxy）"><a href="#🎯-反向代理（Reverse-Proxy）" class="headerlink" title="🎯 反向代理（Reverse Proxy）"></a>🎯 反向代理（Reverse Proxy）</h2><blockquote>
+<p><strong>帮用户访问后端真实服务，用户不知道背后有几个 Flask</strong></p>
+</blockquote>
+<pre class="mermaid">sequenceDiagram
+    participant 用户
+    participant Nginx（反向代理）
+    participant Flask 服务1
+    participant Flask 服务2
+
+    用户->>Nginx: 请求 /index
+    Nginx->>Flask 服务1: 转发请求
+    Flask 服务1-->>Nginx: 返回响应
+    Nginx-->>用户: 返回响应</pre>
+
+<h3 id="🔍-特点-1"><a href="#🔍-特点-1" class="headerlink" title="🔍 特点"></a>🔍 特点</h3><ul>
+<li>用户不配置任何代理</li>
+<li>用户访问的是 Nginx，但真正处理请求的是后端服务（Flask、Django）</li>
+<li>后端服务被“隐藏”了起来</li>
+</ul>
+<h3 id="🛠-用途-1"><a href="#🛠-用途-1" class="headerlink" title="🛠 用途"></a>🛠 用途</h3><ul>
+<li>动静分离（Nginx 提供静态文件）</li>
+<li>负载均衡（分发请求到多个后端）</li>
+<li>提供 HTTPS 支持（SSL 终止）</li>
+<li>统一入口（网关）</li>
+</ul>
+<hr>
+<h2 id="📦-一个经典例子（Flask-Nginx）"><a href="#📦-一个经典例子（Flask-Nginx）" class="headerlink" title="📦 一个经典例子（Flask + Nginx）"></a>📦 一个经典例子（Flask + Nginx）</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[用户浏览器]</span><br><span class="line">     │</span><br><span class="line">     ▼</span><br><span class="line"> [Nginx 反向代理]</span><br><span class="line">     │    ├── 静态资源直接返回</span><br><span class="line">     │    └── 动态请求 → Gunicorn → Flask</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="✅-小结一句话"><a href="#✅-小结一句话" class="headerlink" title="✅ 小结一句话"></a>✅ 小结一句话</h2><blockquote>
+<p>正向代理隐藏的是<strong>客户端</strong>，反向代理隐藏的是<strong>服务端</strong>。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://jiaklop9.github.io">jiaklop9</a></span></div><div class="post-copyright__type"></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://jiaklop9.github.io" target="_blank">jiaklop9</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%A7%91%E6%99%AE/">科普</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/04/22/%E5%BC%80%E6%BA%90%E8%AE%B8%E5%8F%AF%E8%AF%81%E8%AF%A6%E8%A7%A3/" title="开源许可证详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">开源许可证详解</div></div><div class="info-2"><div class="info-item-1">下面我来用通俗易懂的方式为你详细介绍主流的开源许可证，包括它们分别允许你干什么（✅ 权利）和限制你干什么（⚠️ 义务&#x2F;限制）。这对你未来使用或开源项目非常重要。 🧭 总览：开源许可证怎么选？不同的许可证，在“能不能闭源”、“要不要公开修改”、“能不能商用”这些点上差异最大。    许可证 商业可用 闭源可用 修改后是否必须开源 适合谁    MIT ✅ ✅ ❌ 不强制 开发者、初创   Apache 2.0 ✅ ✅ ❌  不强制 企业、平台级   BSD 3-Clause ✅ ✅ ❌ 不强制 教学、研究   GPL v3 ✅ ❌ ✅ 强制 注重自由的开源社区   LGPL v3 ✅ ✅（限度） ✅ （库级别） 做库的人   MPL 2.0 ✅ ✅ ✅（文件级） 平衡自由和开源   🎯 1. MIT License（最宽松）✅ 权利： 可以免费使用、复制、修改、分发；  可以闭源使用（你修改了也不需要开源）；  可以用于商业用途。   ⚠️ 义务： 保留原作者的许可证和版权声明；  没有担保，出错作者不负责。   ✅ 适合： 快速开发、创业、发库、个人项目。📌...</div></div></div></a><a class="pagination-related" href="/2025/04/27/wireshark%E5%85%A5%E9%97%A8/" title="wireshark入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">wireshark入门</div></div><div class="info-2"><div class="info-item-1">一、 过滤器操作过滤器是Wireshark的核心功能，也是我们平时使用最多的一个功能。 Wireshark提供了两个过滤器：抓包过滤器 和 显示过滤器。两个过滤器的过滤思路不同。  抓包过滤器：重点在动作，需要的包我才抓，不需要的我就不抓。 显示过滤器：重点在数据的展示，包已经抓了，只是不显示出来。  1. 抓包过滤器抓包过滤器在抓包前使用，它的过滤有一个基本的语法格式：BPF语法格式。 1）BPF语法BPF（全称 Berkeley Packet Filter），中文叫伯克利封包过滤器，它有四个核心元素：类型、方向、协议 和 逻辑运算符。  类型Type：主机（host）、网段（net）、端口（port） 方向Dir：源地址（src）、目标地址（dst） 协议Proto：各种网络协议，比如：tcp、udp、http 逻辑运算符：与（ &amp;&amp; ）、或（ || ）、非（ ！）  四个元素可以自由组合，比如：  src host 192.168.31.1：抓取源IP为 192.168.31.1 的数据包 tcp || udp：抓取 TCP 或者 UDP...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/04/17/%E5%B8%A6%E5%AE%BD%E7%A7%91%E6%99%AE/" title="带宽科普"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-17</div><div class="info-item-2">带宽科普</div></div><div class="info-2"><div class="info-item-1">🚰 一、什么是“上行带宽”和“下行带宽”？我们可以把带宽想象成水管的宽度，而“上行”和“下行”就是水的流动方向：    类型 意思 举个例子    下行带宽（下载） 别人把东西传给你，你接收 你打开网页、看视频、加载图片   上行带宽（上传） 你把东西传给别人 别人访问你的网站、你发文件、直播    🚩 在“你自己搭建的网站”里，上行带宽才是关键！  🧑‍💻 二、部署网站时，谁用“上行”？谁用“下行”？   行为 属于谁的“上行”？ 属于谁的“下行”？    用户打开你的网站 你的服务器 → 用户 用户 ← 接收页面（下载）   你上传代码到服务器 你 → 服务器 服务器 ← 接收（下载）   用户上传图片给你网站 用户 → 服务器 服务器 ← 接收（上行）    所以，当你做一个网站时，用户在访问你的网站，等于你在“上传”内容给他们看，这靠的是你的 上行带宽！  📦 三、服务器买带宽，为什么要关注“上行带宽”？很多人买服务器时只看到“带宽 5 Mbps”，但要注意： 家用宽带（比如移动、联通）一般是“下行快，上行慢”，比如 100 Mbps 下载 &#x2F; 10...</div></div></div></a><a class="pagination-related" href="/2025/04/22/%E5%BC%80%E6%BA%90%E8%AE%B8%E5%8F%AF%E8%AF%81%E8%AF%A6%E8%A7%A3/" title="开源许可证详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-22</div><div class="info-item-2">开源许可证详解</div></div><div class="info-2"><div class="info-item-1">下面我来用通俗易懂的方式为你详细介绍主流的开源许可证，包括它们分别允许你干什么（✅ 权利）和限制你干什么（⚠️ 义务&#x2F;限制）。这对你未来使用或开源项目非常重要。 🧭 总览：开源许可证怎么选？不同的许可证，在“能不能闭源”、“要不要公开修改”、“能不能商用”这些点上差异最大。    许可证 商业可用 闭源可用 修改后是否必须开源 适合谁    MIT ✅ ✅ ❌ 不强制 开发者、初创   Apache 2.0 ✅ ✅ ❌  不强制 企业、平台级   BSD 3-Clause ✅ ✅ ❌ 不强制 教学、研究   GPL v3 ✅ ❌ ✅ 强制 注重自由的开源社区   LGPL v3 ✅ ✅（限度） ✅ （库级别） 做库的人   MPL 2.0 ✅ ✅ ✅（文件级） 平衡自由和开源   🎯 1. MIT License（最宽松）✅ 权利： 可以免费使用、复制、修改、分发；  可以闭源使用（你修改了也不需要开源）；  可以用于商业用途。   ⚠️ 义务： 保留原作者的许可证和版权声明；  没有担保，出错作者不负责。   ✅ 适合： 快速开发、创业、发库、个人项目。📌...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">jiaklop9</div><div class="author-info-description">白日放歌须纵酒，青春作伴好还乡</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jiaklop9"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%9B%B0%EF%B8%8F-%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86-vs-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88%E9%80%9A%E4%BF%97%E7%90%86%E8%A7%A3%EF%BC%89"><span class="toc-text">🛰️ 正向代理 vs 反向代理（通俗理解）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8C-%E6%A6%82%E5%BF%B5%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">📌 概念对比表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88Forward-Proxy%EF%BC%89"><span class="toc-text">🎯 正向代理（Forward Proxy）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%8D-%E7%89%B9%E7%82%B9"><span class="toc-text">🔍 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9B%A0-%E7%94%A8%E9%80%94"><span class="toc-text">🛠 用途</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88Reverse-Proxy%EF%BC%89"><span class="toc-text">🎯 反向代理（Reverse Proxy）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%8D-%E7%89%B9%E7%82%B9-1"><span class="toc-text">🔍 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9B%A0-%E7%94%A8%E9%80%94-1"><span class="toc-text">🛠 用途</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A6-%E4%B8%80%E4%B8%AA%E7%BB%8F%E5%85%B8%E4%BE%8B%E5%AD%90%EF%BC%88Flask-Nginx%EF%BC%89"><span class="toc-text">📦 一个经典例子（Flask + Nginx）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E5%B0%8F%E7%BB%93%E4%B8%80%E5%8F%A5%E8%AF%9D"><span class="toc-text">✅ 小结一句话</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/09/pandas%E5%A4%9A%E7%BA%A7%E8%A1%A8%E5%A4%B4%E5%A4%84%E7%90%86/" title="pandas多级表头处理">pandas多级表头处理</a><time datetime="2026-05-09T00:28:47.000Z" title="发表于 2026-05-09 08:28:47">2026-05-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/07/docker%E5%AE%B9%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8/" title="docker容器的使用">docker容器的使用</a><time datetime="2026-05-07T13:51:48.000Z" title="发表于 2026-05-07 21:51:48">2026-05-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/07/%E4%BD%BF%E7%94%A8docker%E9%95%9C%E5%83%8F/" title="使用docker镜像">使用docker镜像</a><time datetime="2026-05-07T12:49:27.000Z" title="发表于 2026-05-07 20:49:27">2026-05-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/07/docker%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%AE%89%E8%A3%85/" title="docker概念与安装">docker概念与安装</a><time datetime="2026-05-07T12:04:03.000Z" title="发表于 2026-05-07 20:04:03">2026-05-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/12/js%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%8F%8Ahook%E5%BA%94%E7%94%A8/" title="js中的属性描述符及hook应用">js中的属性描述符及hook应用</a><time datetime="2025-11-12T03:41:53.000Z" title="发表于 2025-11-12 11:41:53">2025-11-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2026 By jiaklop9</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liSE7OgVkzZHDSYt',
+      clientSecret: '62cd9adcbef8e1195df927bea340438557e497d8',
+      repo: 'jiaklop9.github.io.gitalk',
+      owner: 'jiaklop9',
+      admin: ['jiaklop9'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'e373e9e067578597018e43e5b1aee881'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
