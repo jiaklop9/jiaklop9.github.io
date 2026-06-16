@@ -4,6 +4,7 @@ date: 2025-04-07 13:56:57
 tags: JavaScript
 abbrlink: https://developer.aliyun.com/article/1497013
 categories: 前端
+series: js
 ---
 
 理解 JavaScript 中的栈（stack）和堆（heap）是理解 JavaScript 内存管理的关键。栈和堆是两种不同的内存分配方式，用于存储数据和变量。在本文中，我将详细解释栈和堆的概念、优缺点，并提供示例代码片段来帮助读者更好地理解。

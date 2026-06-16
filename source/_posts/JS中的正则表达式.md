@@ -3,6 +3,7 @@ title: JS中的正则表达式
 date: 2025-05-12 08:47:11
 tags: JavaScript
 categories: 前端
+series: js
 ---
 
 # JavaScript中的正则表达式常见形式
