@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>策略模式2 | jiaklop9</title><meta name="author" content="jiaklop9"><meta name="copyright" content="jiaklop9"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="今天我们来聊一个在消除复杂业务分支、提升代码可扩展性方面立竿见影的经典行为型模式——策略模式（Strategy Pattern）。 Day 4：策略模式 (Strategy Pattern)1. 它是怎么来的？在日常开发中，我们经常需要根据不同的条件执行不同的业务逻辑。比如你正在开发一个电商系统的购物车结算模块，最初只有“普通会员”不打折： 123def calculate_price(price">
+<meta property="og:type" content="article">
+<meta property="og:title" content="策略模式2">
+<meta property="og:url" content="http://jiaklop9.github.io/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/index.html">
+<meta property="og:site_name" content="jiaklop9">
+<meta property="og:description" content="今天我们来聊一个在消除复杂业务分支、提升代码可扩展性方面立竿见影的经典行为型模式——策略模式（Strategy Pattern）。 Day 4：策略模式 (Strategy Pattern)1. 它是怎么来的？在日常开发中，我们经常需要根据不同的条件执行不同的业务逻辑。比如你正在开发一个电商系统的购物车结算模块，最初只有“普通会员”不打折： 123def calculate_price(price">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://jiaklop9.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-07-17T01:33:32.000Z">
+<meta property="article:modified_time" content="2026-07-17T01:37:37.190Z">
+<meta property="article:author" content="jiaklop9">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://jiaklop9.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "策略模式2",
+  "url": "http://jiaklop9.github.io/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/",
+  "image": "http://jiaklop9.github.io/img/avatar.jpg",
+  "datePublished": "2026-07-17T01:33:32.000Z",
+  "dateModified": "2026-07-17T01:37:37.190Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "jiaklop9",
+      "url": "http://jiaklop9.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://jiaklop9.github.io/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":-1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '策略模式2',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/index.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.jpg" alt="Logo"><span class="site-name">jiaklop9</span></a><a class="nav-page-title" href="/"><span class="site-name">策略模式2</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">策略模式2</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-17T01:33:32.000Z" title="发表于 2026-07-17 09:33:32">2026-07-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-17T01:37:37.190Z" title="更新于 2026-07-17 09:37:37">2026-07-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>今天我们来聊一个在消除复杂业务分支、提升代码可扩展性方面立竿见影的经典行为型模式——策略模式（Strategy Pattern）。</p>
+<h1 id="Day-4：策略模式-Strategy-Pattern"><a href="#Day-4：策略模式-Strategy-Pattern" class="headerlink" title="Day 4：策略模式 (Strategy Pattern)"></a>Day 4：策略模式 (Strategy Pattern)</h1><h2 id="1-它是怎么来的？"><a href="#1-它是怎么来的？" class="headerlink" title="1. 它是怎么来的？"></a>1. 它是怎么来的？</h2><p>在日常开发中，我们经常需要根据不同的条件执行不同的业务逻辑。<br>比如你正在开发一个电商系统的购物车结算模块，最初只有“普通会员”不打折：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">calculate_price</span>(<span class="params">price, user_level</span>):</span><br><span class="line">    <span class="keyword">if</span> user_level == <span class="string">&quot;normal&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> price</span><br></pre></td></tr></table></figure>
+<p>随着业务发展，运营同学提出了各种花式促销：黄金会员打 9 折，白金会员打 8 折，双十一满 300 减 50，618 还有限时秒杀……于是你的代码变成了这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> user_level == <span class="string">&quot;normal&quot;</span>:</span><br><span class="line">    <span class="keyword">return</span> price</span><br><span class="line"><span class="keyword">elif</span> user_level == <span class="string">&quot;gold&quot;</span>:</span><br><span class="line">    <span class="keyword">return</span> price * <span class="number">0.9</span></span><br><span class="line"><span class="keyword">elif</span> user_level == <span class="string">&quot;platinum&quot;</span>:</span><br><span class="line">    <span class="keyword">return</span> price * <span class="number">0.8</span></span><br><span class="line"><span class="keyword">elif</span> festival == <span class="string">&quot;double_11&quot;</span> <span class="keyword">and</span> price &gt;= <span class="number">300</span>:</span><br><span class="line">    <span class="keyword">return</span> price - <span class="number">50</span></span><br><span class="line"><span class="comment"># 随着营销策略不断增加，这个函数会变成几百行的“代码怪兽”，每次修改都可能引发其他逻辑崩溃，严重违反“开闭原则”。</span></span><br></pre></td></tr></table></figure>
+<p>策略模式就是为了终结这种 if-elif-else 泥潭而生的。<br>它主张：<strong>定义一系列算法，把它们一个个封装起来，并且使它们可以相互替换。</strong><br>策略模式让算法的变化独立于使用它的客户端。在运行时，你只需要根据不同的上下文（Context）为它注入对应的具体策略对象即可。</p>
+<h2 id="2-适用场景"><a href="#2-适用场景" class="headerlink" title="2. 适用场景"></a>2. 适用场景</h2><ul>
+<li><strong>多分支算法切换</strong>：一个系统需要动态地在几种算法或业务规则中选择一种，且分支逻辑非常臃肿。</li>
+<li><strong>屏蔽算法底层差异</strong>：你想封装算法的实现细节，让客户端只关心“做什么”，而不关心“怎么做”。</li>
+<li><strong>消除条件分支语句</strong>：代码中出现了大量的 if-elif-else 或 switch-case，且这些分支唯一的区别仅仅是执行的具体行为不同。</li>
+</ul>
+<h2 id="3-优缺点分析"><a href="#3-优缺点分析" class="headerlink" title="3. 优缺点分析"></a>3. 优缺点分析</h2><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>完美符合开闭原则：新增一种算法或策略时，只需增加一个新的策略类，无需修改原有的上下文逻辑。</td>
+<td>客户端必须知晓所有策略：调用者需要知道有哪些策略可供选择，以便决定在什么情况下使用哪一个策略。</td>
+</tr>
+<tr>
+<td>避免多重条件判断：用面向对象或动态组合的多态性，彻底消除臃肿的 if-elif-else 分支。</td>
+<td>策略类数量可能激增：每个策略都需要独立封装，如果策略非常多，会导致项目中类的数量显著增加。</td>
+</tr>
+<tr>
+<td>极高复用性：策略类与具体的上下文解耦，可以被应用到系统中的其他模块。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="4-Python-代码实现"><a href="#4-Python-代码实现" class="headerlink" title="4. Python 代码实现"></a>4. Python 代码实现</h2><p>Python 支持“函数是一等公民”，这意味着我们不仅可以用传统的面向对象方式实现策略模式，还可以用直接传递函数的高级玩法，让代码更加轻量。</p>
+<h3 id="💡-简单实例：电商打折季"><a href="#💡-简单实例：电商打折季" class="headerlink" title="💡 简单实例：电商打折季"></a>💡 简单实例：电商打折季</h3><p>我们来实现上述的电商结算场景，首先使用标准的面向对象方式来理解它的基本结构。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 1. 抽象策略 (Strategy Interface) =================</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DiscountStrategy</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">calculate</span>(<span class="params">self, price: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 2. 具体策略 (Concrete Strategies) =================</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NormalUserStrategy</span>(<span class="title class_ inherited__">DiscountStrategy</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;普通用户：原价&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">calculate</span>(<span class="params">self, price: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        <span class="keyword">return</span> price</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GoldUserStrategy</span>(<span class="title class_ inherited__">DiscountStrategy</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;黄金会员：9 折&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">calculate</span>(<span class="params">self, price: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        <span class="keyword">return</span> price * <span class="number">0.9</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PlatinumUserStrategy</span>(<span class="title class_ inherited__">DiscountStrategy</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;白金会员：8 折&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">calculate</span>(<span class="params">self, price: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        <span class="keyword">return</span> price * <span class="number">0.8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 3. 上下文环境 (Context) =================</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">OrderContext</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, price: <span class="built_in">float</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.price = price</span><br><span class="line">        <span class="variable language_">self</span>._strategy = <span class="literal">None</span>  <span class="comment"># 持有具体的策略对象</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_strategy</span>(<span class="params">self, strategy: DiscountStrategy</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;动态注入或切换策略&quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>._strategy = strategy</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_final_price</span>(<span class="params">self</span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="variable language_">self</span>._strategy:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;尚未配置计价策略！&quot;</span>)</span><br><span class="line">        <span class="comment"># 将计算逻辑委托给当前的策略对象</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._strategy.calculate(<span class="variable language_">self</span>.price)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 客户端调用 =================</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    original_price = <span class="number">1000.0</span></span><br><span class="line">    order = OrderContext(original_price)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;商品原价: ¥<span class="subst">&#123;original_price&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 场景一：普通用户结算</span></span><br><span class="line">    order.set_strategy(NormalUserStrategy())</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;💰 [普通用户] 最终应付: ¥<span class="subst">&#123;order.get_final_price():<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 场景二：黄金会员结算</span></span><br><span class="line">    order.set_strategy(GoldUserStrategy())</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;💰 [黄金会员] 最终应付: ¥<span class="subst">&#123;order.get_final_price():<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 场景三：白金会员结算</span></span><br><span class="line">    order.set_strategy(PlatinumUserStrategy())</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;💰 [白金会员] 最终应付: ¥<span class="subst">&#123;order.get_final_price():<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="🚀-复杂实例：一键切换的轻量级支付路由-结合-Python-函数特性"><a href="#🚀-复杂实例：一键切换的轻量级支付路由-结合-Python-函数特性" class="headerlink" title="🚀 复杂实例：一键切换的轻量级支付路由 (结合 Python 函数特性)"></a>🚀 复杂实例：一键切换的轻量级支付路由 (结合 Python 函数特性)</h3><p>在实际工业开发中，如果每个策略只有简单的几行逻辑，硬写一堆类会显得有些大炮打蚊子。<br>利用 Python 的函数式编程特性和装饰器字典映射，我们可以在运行时优雅地建立一个“策略路由表”，不仅不需要写任何 ABC 抽象基类，还能保持完美的开闭原则。</p>
+<p>下面是一个支持动态扩展的第三方支付路由系统（支持微信、支付宝、贝宝、数字货币）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Callable</span>, <span class="type">Dict</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 智能策略路由中心 =================</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaymentRouter</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    通过装饰器注册机制实现的轻量级策略中心</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    _strategies: <span class="type">Dict</span>[<span class="built_in">str</span>, <span class="type">Callable</span>[[<span class="built_in">float</span>], <span class="built_in">str</span>]] = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">cls, pay_method: <span class="built_in">str</span></span>) -&gt; <span class="type">Callable</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        装饰器：用于在运行时动态注册支付策略函数</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func: <span class="type">Callable</span></span>) -&gt; <span class="type">Callable</span>:</span><br><span class="line">            cls._strategies[pay_method.lower()] = func</span><br><span class="line">            <span class="keyword">return</span> func</span><br><span class="line">        <span class="keyword">return</span> decorator</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute_payment</span>(<span class="params">cls, pay_method: <span class="built_in">str</span>, amount: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        上下文网关：动态获取策略并执行</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        strategy = cls._strategies.get(pay_method.lower())</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> strategy:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">f&quot;❌ 不支持的支付方式: <span class="subst">&#123;pay_method&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> strategy(amount)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 动态注册具体策略 (无需写类，纯函数即可) =================</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@PaymentRouter.register(<span class="params"><span class="string">&quot;wechat&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pay_via_wechat</span>(<span class="params">amount: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;[微信支付] 成功拉取微信 SDK，已扣款 ¥<span class="subst">&#123;amount&#125;</span>，手续费 0.1%&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@PaymentRouter.register(<span class="params"><span class="string">&quot;alipay&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pay_via_alipay</span>(<span class="params">amount: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;[支付宝] 成功调起手机支付宝，已扣款 ¥<span class="subst">&#123;amount&#125;</span>，使用花呗分期服务&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@PaymentRouter.register(<span class="params"><span class="string">&quot;paypal&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pay_via_paypal</span>(<span class="params">amount: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    usd_amount = <span class="built_in">round</span>(amount / <span class="number">8.0</span>, <span class="number">2</span>)  <span class="comment"># 假设汇率模拟</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;[PayPal] 跨境网关认证成功，已扣除 $<span class="subst">&#123;usd_amount&#125;</span> (折合 ¥<span class="subst">&#123;amount&#125;</span>)&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 扩展新策略（不修改既有路由系统） =================</span></span><br><span class="line"><span class="comment"># 突发业务需求：要临时支持比特币支付，直接定义并用装饰器注入即可</span></span><br><span class="line"><span class="meta">@PaymentRouter.register(<span class="params"><span class="string">&quot;bitcoin&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pay_via_bitcoin</span>(<span class="params">amount: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;[加密货币] 链上广播成功，已转账对应价值 ¥<span class="subst">&#123;amount&#125;</span> 的 BTC，等待区块确认&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ================= 客户端测试 =================</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    order_amount = <span class="number">2400.00</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;🛒 订单总额: ¥<span class="subst">&#123;order_amount&#125;</span>\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 模拟前端传回不同的支付渠道，后端一行代码动态路由</span></span><br><span class="line">    <span class="keyword">for</span> method <span class="keyword">in</span> [<span class="string">&quot;wechat&quot;</span>, <span class="string">&quot;alipay&quot;</span>, <span class="string">&quot;paypal&quot;</span>, <span class="string">&quot;bitcoin&quot;</span>]:</span><br><span class="line">        <span class="comment"># 客户端无需感知具体的函数名或类名，只管传入策略标识</span></span><br><span class="line">        result = PaymentRouter.execute_payment(method, order_amount)</span><br><span class="line">        <span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试异常策略</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        PaymentRouter.execute_payment(<span class="string">&quot;visa&quot;</span>, order_amount)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n捕获预期异常: <span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://jiaklop9.github.io">jiaklop9</a></span></div><div class="post-copyright__type"></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://jiaklop9.github.io" target="_blank">jiaklop9</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/16/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="抽象工厂模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">抽象工厂模式</div></div><div class="info-2"><div class="info-item-1">如果说昨天的工厂方法是针对单个产品（比如只生产卡车），那么今天的抽象工厂就是针对产品族（比如生产一整套豪华汽车组件，包括豪华车轮、豪华方向盘）。 Day 3：抽象工厂模式 (Abstract Factory Pattern)1. 它是怎么来的？想象一下，你正在开发一款跨平台的 UI 工具包（支持 Windows 和 Mac）。UI 组件有很多种：按钮（Button）、复选框（Checkbox）、文本框（TextField）。 如果你用昨天的工厂方法，你得写一个 ButtonFactory、一个 CheckboxFactory。但这里有一个致命的隐患：你必须确保 Windows 系统上创建的按钮和复选框都是 Windows 风格的，绝对不能在 Mac 系统里误用了一个 Windows 风格的按钮。 这就引入了“产品族”的概念。Windows 的按钮和 Windows 的复选框属于同一个产品族；Mac 的按钮和 Mac...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/26/%E7%9B%91%E5%90%AC%E8%80%85%E6%A8%A1%E5%BC%8F/" title="监听者模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-26</div><div class="info-item-2">监听者模式</div></div><div class="info-2"><div class="info-item-1">...</div></div></div></a><a class="pagination-related" href="/2025/06/27/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/" title="策略模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-27</div><div class="info-item-2">策略模式</div></div><div class="info-2"><div class="info-item-1">策略模式1. 定义定义一系列算法，将每个算法都封装起来，并且使它们之间可以相互替换。策略模式使算法可以独立于使用它的用户而变化 2. 核心思想对算法、规则进行封装，使得替换算法和新增算法更加灵活 3. 模型说明3.1 设计要点策略模式中主要有三个角色，在设计策略模式时要找到并区分这些角色。 （1）上下文环境（Context）​：起着承上启下的封装作用，屏蔽上层应用对策略（算法）的直接访问，封装可能存在的变化。 （2）策略的抽象（Strategy）​：策略（算法）的抽象类，定义统一的接口，规定每个子类必须实现的方法。 （3）具备的策略：策略的具体实现者，可以有多个不同的（算法或规则）实现。 3.2策略模式的优缺点优点（1）算法（规则）可自由切换。 （2）避免使用多重条件判断。 （3）方便拓展和增加新的算法（规则）​。 缺点：所有策略类都需要对外暴露 4....</div></div></div></a><a class="pagination-related" href="/2025/06/26/%E8%81%8C%E8%B4%A3%E6%A8%A1%E5%BC%8F/" title="职责模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-26</div><div class="info-item-2">职责模式</div></div><div class="info-2"><div class="info-item-1">...</div></div></div></a><a class="pagination-related" href="/2026/07/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例设计模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-16</div><div class="info-item-2">单例设计模式</div></div><div class="info-2"><div class="info-item-1">单例模式 (Singleton Pattern)1. 它是怎么来的？在软件开发中，我们经常会遇到一些“只需要一个，多了就会乱套”的资源。比如：  电脑的回收站（你不需要两个回收站，它们会打架）。 数据库连接池（频繁创建和销毁连接非常消耗性能，保持一个全局可复用的连接池更高效）。 应用程序的全局配置（如果每个模块都自己读一份配置，万一中途改了，数据就不一致了）。在过去，程序员们通过全局变量来解决这个问题。但全局变量不仅不安全（容易被不小心覆盖），还破坏了面向对象的封装性。于是，Gang of Four（四人帮，设计模式的奠基者们）提出了单例模式：确保一个类只有一个实例，并提供一个全局访问点。  2. 适用场景 资源共享&#x2F;控制：如日志记录器（Logger）、线程池、缓存。 统一配置管理：如读取 config.ini 或环境变量的类。 硬件接口访问：如打印机后台处理程序、显卡驱动接口。  3....</div></div></div></a><a class="pagination-related" href="/2026/07/16/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="工厂模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-16</div><div class="info-item-2">工厂模式</div></div><div class="info-2"><div class="info-item-1">今天我们来聊一个在实际开发中极度常用，能让你的代码彻底摆脱 if-elif-else 泥潭的经典创建型模式——工厂方法模式（Factory Method Pattern）。 Day 2：工厂方法模式 (Factory Method Pattern)1. 它是怎么来的？在写代码时，我们经常需要创建对象。最直接的方法就是用 new（在 Python 中是 Class()）。比如你正在开发一个物流管理系统，刚开始业务简单，只有“卡车”送货，你满脑子都是： 12transport = Truck()transport.deliver()  但很快，业务扩大，客户要求增加“轮船”送货。你不得不去修改原有的代码，加上判断逻辑： 12345if mode == &quot;road&quot;:    transport = Truck()elif mode == &quot;sea&quot;:    transport = Ship()#...</div></div></div></a><a class="pagination-related" href="/2026/07/16/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="抽象工厂模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-16</div><div class="info-item-2">抽象工厂模式</div></div><div class="info-2"><div class="info-item-1">如果说昨天的工厂方法是针对单个产品（比如只生产卡车），那么今天的抽象工厂就是针对产品族（比如生产一整套豪华汽车组件，包括豪华车轮、豪华方向盘）。 Day 3：抽象工厂模式 (Abstract Factory Pattern)1. 它是怎么来的？想象一下，你正在开发一款跨平台的 UI 工具包（支持 Windows 和 Mac）。UI 组件有很多种：按钮（Button）、复选框（Checkbox）、文本框（TextField）。 如果你用昨天的工厂方法，你得写一个 ButtonFactory、一个 CheckboxFactory。但这里有一个致命的隐患：你必须确保 Windows 系统上创建的按钮和复选框都是 Windows 风格的，绝对不能在 Mac 系统里误用了一个 Windows 风格的按钮。 这就引入了“产品族”的概念。Windows 的按钮和 Windows 的复选框属于同一个产品族；Mac 的按钮和 Mac...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">jiaklop9</div><div class="author-info-description">白日放歌须纵酒，青春作伴好还乡</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jiaklop9"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Day-4%EF%BC%9A%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F-Strategy-Pattern"><span class="toc-text">Day 4：策略模式 (Strategy Pattern)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%83%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%EF%BC%9F"><span class="toc-text">1. 它是怎么来的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">2. 适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BC%98%E7%BC%BA%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">3. 优缺点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Python-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">4. Python 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%A1-%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B%EF%BC%9A%E7%94%B5%E5%95%86%E6%89%93%E6%8A%98%E5%AD%A3"><span class="toc-text">💡 简单实例：电商打折季</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9A%80-%E5%A4%8D%E6%9D%82%E5%AE%9E%E4%BE%8B%EF%BC%9A%E4%B8%80%E9%94%AE%E5%88%87%E6%8D%A2%E7%9A%84%E8%BD%BB%E9%87%8F%E7%BA%A7%E6%94%AF%E4%BB%98%E8%B7%AF%E7%94%B1-%E7%BB%93%E5%90%88-Python-%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7"><span class="toc-text">🚀 复杂实例：一键切换的轻量级支付路由 (结合 Python 函数特性)</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/26/%E7%9B%91%E5%90%AC%E8%80%85%E6%A8%A1%E5%BC%8F/" title="监听者模式">监听者模式</a><time datetime="2025-06-26T01:52:12.000Z" title="发表于 2025-06-26 09:52:12">2025-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/26/%E8%81%8C%E8%B4%A3%E6%A8%A1%E5%BC%8F/" title="职责模式">职责模式</a><time datetime="2025-06-26T03:23:15.000Z" title="发表于 2025-06-26 11:23:15">2025-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例设计模式">单例设计模式</a><time datetime="2026-07-16T07:05:01.000Z" title="发表于 2026-07-16 15:05:01">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="工厂模式">工厂模式</a><time datetime="2026-07-16T09:10:39.000Z" title="发表于 2026-07-16 17:10:39">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="抽象工厂模式">抽象工厂模式</a><time datetime="2026-07-16T09:22:08.000Z" title="发表于 2026-07-16 17:22:08">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/" title="策略模式2">策略模式2</a><time datetime="2026-07-17T01:33:32.000Z" title="发表于 2026-07-17 09:33:32">2026-07-17</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/" title="策略模式2">策略模式2</a><time datetime="2026-07-17T01:33:32.000Z" title="发表于 2026-07-17 09:33:32">2026-07-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="抽象工厂模式">抽象工厂模式</a><time datetime="2026-07-16T09:22:08.000Z" title="发表于 2026-07-16 17:22:08">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="工厂模式">工厂模式</a><time datetime="2026-07-16T09:10:39.000Z" title="发表于 2026-07-16 17:10:39">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例设计模式">单例设计模式</a><time datetime="2026-07-16T07:05:01.000Z" title="发表于 2026-07-16 15:05:01">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/16/JS%E4%B8%AD%E7%9A%84%E5%8E%9F%E5%9E%8B%E5%8F%8A%E5%8E%9F%E5%9E%8B%E9%93%BE/" title="JS中的原型及原型链">JS中的原型及原型链</a><time datetime="2026-06-16T00:01:32.000Z" title="发表于 2026-06-16 08:01:32">2026-06-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2026 By jiaklop9</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liSE7OgVkzZHDSYt',
+      clientSecret: '62cd9adcbef8e1195df927bea340438557e497d8',
+      repo: 'jiaklop9.github.io.gitalk',
+      owner: 'jiaklop9',
+      admin: ['jiaklop9'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '04620f5fce880aed2fad2e33c61413f6'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
