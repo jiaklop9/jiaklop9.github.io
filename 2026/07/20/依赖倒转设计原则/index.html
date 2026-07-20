@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>依赖倒转设计原则 | jiaklop9</title><meta name="author" content="jiaklop9"><meta name="copyright" content="jiaklop9"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是依赖倒转原则（Dependency Inversion Principle, DIP）？依赖倒转原则是面向对象设计（SOLID）中的另一个核心原则。用通俗易懂的话来解释就是： 高层模块不应该依赖低层模块，二者都应该依赖其抽象；抽象不应该依赖细节，细节应该依赖抽象。 打个比方：你想用手机听歌，你戴上了一副Type-C接口的耳机。在这个场景下：  不符合原则的设计：你的手机内部电路是针对“某一款">
+<meta property="og:type" content="article">
+<meta property="og:title" content="依赖倒转设计原则">
+<meta property="og:url" content="http://jiaklop9.github.io/2026/07/20/%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/index.html">
+<meta property="og:site_name" content="jiaklop9">
+<meta property="og:description" content="什么是依赖倒转原则（Dependency Inversion Principle, DIP）？依赖倒转原则是面向对象设计（SOLID）中的另一个核心原则。用通俗易懂的话来解释就是： 高层模块不应该依赖低层模块，二者都应该依赖其抽象；抽象不应该依赖细节，细节应该依赖抽象。 打个比方：你想用手机听歌，你戴上了一副Type-C接口的耳机。在这个场景下：  不符合原则的设计：你的手机内部电路是针对“某一款">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://jiaklop9.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-07-20T01:51:08.000Z">
+<meta property="article:modified_time" content="2026-07-20T01:55:58.649Z">
+<meta property="article:author" content="jiaklop9">
+<meta property="article:tag" content="设计原则">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://jiaklop9.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "依赖倒转设计原则",
+  "url": "http://jiaklop9.github.io/2026/07/20/%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/",
+  "image": "http://jiaklop9.github.io/img/avatar.jpg",
+  "datePublished": "2026-07-20T01:51:08.000Z",
+  "dateModified": "2026-07-20T01:55:58.649Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "jiaklop9",
+      "url": "http://jiaklop9.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://jiaklop9.github.io/2026/07/20/%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":-1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '依赖倒转设计原则',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/index.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.jpg" alt="Logo"><span class="site-name">jiaklop9</span></a><a class="nav-page-title" href="/"><span class="site-name">依赖倒转设计原则</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-solid fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">依赖倒转设计原则</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-20T01:51:08.000Z" title="发表于 2026-07-20 09:51:08">2026-07-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-20T01:55:58.649Z" title="更新于 2026-07-20 09:55:58">2026-07-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计原则</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="什么是依赖倒转原则（Dependency-Inversion-Principle-DIP）？"><a href="#什么是依赖倒转原则（Dependency-Inversion-Principle-DIP）？" class="headerlink" title="什么是依赖倒转原则（Dependency Inversion Principle, DIP）？"></a><strong>什么是依赖倒转原则（Dependency Inversion Principle, DIP）？</strong></h1><p>依赖倒转原则是面向对象设计（SOLID）中的另一个核心原则。用通俗易懂的话来解释就是：</p>
+<p><strong>高层模块不应该依赖低层模块，二者都应该依赖其抽象；抽象不应该依赖细节，细节应该依赖抽象。</strong></p>
+<p>打个比方：<br>你想用手机听歌，你戴上了一副Type-C接口的耳机。在这个场景下：</p>
+<ul>
+<li>不符合原则的设计：你的手机内部电路是针对“某一款特定型号的耳机”专门焊接死在一起的。一旦那副耳机坏了，或者你想换个蓝牙耳机，你的手机就彻底报废了，因为手机太依赖那个具体的耳机了。</li>
+<li>符合原则的设计（依赖倒转）：手机厂商和耳机厂商共同遵守一个通用接口标准（比如 Type-C 协议或蓝牙协议）。手机只需要支持这个通用协议（抽象），耳机也去实现这个通用协议（抽象）。这样，你的手机可以插任何品牌的 Type-C 耳机，甚至接 Type-C 充电线、U盘。<br><strong>所谓的“倒转”</strong>：在传统思维中，我们习惯让高层建筑（核心业务）直接建在低层砖块（具体实现）上。而依赖倒转把这个关系“倒过来了”，高层和低层都去依赖中间那一层“铁律&#x2F;标准”（抽象接口）。</li>
+</ul>
+<h1 id="它是怎么来的？"><a href="#它是怎么来的？" class="headerlink" title="它是怎么来的？"></a>它是怎么来的？</h1><p>这个原则由 罗伯特·C·马丁（Uncle Bob） 于 1996 年提出。</p>
+<p>在早期的结构化编程（如 C 语言时代）中，高层模块（如业务逻辑）总是直接调用低层模块（如数据库读写、文件打印）。这种自上而下的依赖关系导致了一个严重后果：一旦底层的技术换了（比如从 MySQL 换成 Oracle，或者打印机换了驱动），上层的核心业务逻辑就必须跟着大改。</p>
+<p>为了打破这种“底层技术绑架上层业务”的僵局，Uncle Bob 提出了依赖倒转原则，通过引入抽象层，彻底斩断了高层对低层的直接依赖。</p>
+<h1 id="它有什么用？（为什么要用它）"><a href="#它有什么用？（为什么要用它）" class="headerlink" title="它有什么用？（为什么要用它）"></a>它有什么用？（为什么要用它）</h1><ol>
+<li>解耦核心业务与底层技术：你的业务逻辑（如“用户下单”）不再关心底层是用 MySQL、Redis 还是本地文件来存数据。底层怎么变，业务层都稳如泰山。</li>
+<li>极大地提高代码的可测试性：在写单元测试时，如果高层依赖抽象，你可以非常轻松地用一个“假的模块（Mock）”来代替真实的数据库或外部网络接口，从而实现快速测试。</li>
+<li>实现真正的“插拔式”开发：只要大家遵守同一个接口规范，团队成员可以同时开发前端、后端、数据库端，最后像拼积木一样完美组合。</li>
+</ol>
+<h1 id="有什么优缺点？"><a href="#有什么优缺点？" class="headerlink" title="有什么优缺点？"></a>有什么优缺点？</h1><h2 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h2><ol>
+<li>架构极其稳定：由于高层依赖的是不容易多变的“抽象规范”，整个系统的骨架变得非常稳固。</li>
+<li>高灵活性与可扩展性：可以随时把低层组件替换掉（如把发短信的供应商从阿里云换成腾讯云），而不影响任何上层逻辑。</li>
+</ol>
+<h2 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h2><ol>
+<li>类的数量翻倍：每个具体实现的背后，几乎都需要先定义一个抽象类或接口，这增加了代码的文件量和阅读时的跳转成本。</li>
+<li>理解成本变高：初学者在看代码时，无法一眼看到最终的执行逻辑，需要理解一层“抽象”的转手。</li>
+</ol>
+<h1 id="Python-代码示例"><a href="#Python-代码示例" class="headerlink" title="Python 代码示例"></a>Python 代码示例</h1><p>Python 虽然是动态语言（没有强类型的 interface 关键字），但我们通常使用抽象基类（ABC）来充当这个“共同遵守的契约&#x2F;抽象”。</p>
+<h2 id="示例-1：简单示例（灯泡与开关）"><a href="#示例-1：简单示例（灯泡与开关）" class="headerlink" title="示例 1：简单示例（灯泡与开关）"></a>示例 1：简单示例（灯泡与开关）</h2><h3 id="❌-违反-DIP-的做法"><a href="#❌-违反-DIP-的做法" class="headerlink" title="❌ 违反 DIP 的做法"></a>❌ 违反 DIP 的做法</h3><p>Switch（高层）直接依赖了 LightBulb（低层）。如果以后想用这个开关去控制“电视机”或者“风扇”，就必须修改 Switch 类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LightBulb</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;灯泡亮了&quot;</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_off</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;灯泡灭了&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Switch</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 致命伤：直接在内部实例化了具体的灯泡，焊死了！</span></span><br><span class="line">        <span class="variable language_">self</span>.bulb = LightBulb() </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">click</span>(<span class="params">self, status</span>):</span><br><span class="line">        <span class="keyword">if</span> status == <span class="string">&quot;on&quot;</span>:</span><br><span class="line">            <span class="variable language_">self</span>.bulb.turn_on()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.bulb.turn_off()</span><br></pre></td></tr></table></figure>
+<h3 id="遵循-DIP-的做法（正确示范）"><a href="#遵循-DIP-的做法（正确示范）" class="headerlink" title="遵循 DIP 的做法（正确示范）"></a>遵循 DIP 的做法（正确示范）</h3><p>我们定义一个共同的契约——“可开关的设备 (SwitchableDevice)”，让开关和具体电器都依赖它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 抽象（中间的铁律标准）：高层和低层都要依赖它</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SwitchableDevice</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">        </span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_off</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 低层模块：不再被高层直接掌控，而是主动去实现“抽象”</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LightBulb</span>(<span class="title class_ inherited__">SwitchableDevice</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;灯泡亮了...&quot;</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_off</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;灯泡灭了...&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fan</span>(<span class="title class_ inherited__">SwitchableDevice</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;新扩展的低层模块，只要符合标准，也能被开关控制&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;风扇转起来了...&quot;</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">turn_off</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;风扇停下来了...&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 高层模块：只依赖抽象，不依赖具体的灯泡或风扇</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Switch</span>:</span><br><span class="line">    <span class="comment"># 依赖注入：通过构造函数把符合标准的设备传进来</span></span><br><span class="line">    <span class="comment"># 此时 Switch 依赖的是 SwitchableDevice 这个抽象，而不是具体的某个类</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, device: SwitchableDevice</span>):</span><br><span class="line">        <span class="variable language_">self</span>.device = device</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">operate</span>(<span class="params">self, action: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">if</span> action == <span class="string">&quot;open&quot;</span>:</span><br><span class="line">            <span class="variable language_">self</span>.device.turn_on()</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="string">&quot;close&quot;</span>:</span><br><span class="line">            <span class="variable language_">self</span>.device.turn_off()</span><br><span class="line"></span><br><span class="line"><span class="comment"># === 使用测试 ===</span></span><br><span class="line">bulb = LightBulb()</span><br><span class="line">fan = Fan()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 同一个开关，既可以控制灯泡，也可以控制风扇</span></span><br><span class="line">switch_for_bulb = Switch(bulb)</span><br><span class="line">switch_for_bulb.operate(<span class="string">&quot;open&quot;</span>)</span><br><span class="line"></span><br><span class="line">switch_for_fan = Switch(fan)</span><br><span class="line">switch_for_fan.operate(<span class="string">&quot;close&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="示例-2：复杂示例（通知推送系统）"><a href="#示例-2：复杂示例（通知推送系统）" class="headerlink" title="示例 2：复杂示例（通知推送系统）"></a>示例 2：复杂示例（通知推送系统）</h2><p>这个例子模拟了一个业务通知系统：当用户下单成功后，系统需要发送通知。未来通知的渠道可能会从“短信”变成“邮件”或“企业微信”，我们来看看依赖倒转如何大显身手。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="comment"># 第一部分：定义抽象层（共同遵守的契约）</span></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MessageSender</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;消息发送器的抽象基类。</span></span><br><span class="line"><span class="string">    这就是“抽象”，它定义了所有发送渠道必须遵守的规范。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send</span>(<span class="params">self, recipient: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="comment"># 第二部分：具体的低层模块实现（细节依赖抽象）</span></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SmsSender</span>(<span class="title class_ inherited__">MessageSender</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;短信发送渠道（低层细节）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send</span>(<span class="params">self, recipient: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[短信服务] 正在向手机号 <span class="subst">&#123;recipient&#125;</span> 发送验证码/通知...&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;内容: <span class="subst">&#123;content&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmailSender</span>(<span class="title class_ inherited__">MessageSender</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;邮件发送渠道（低层细节）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send</span>(<span class="params">self, recipient: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[邮件服务] 正在向邮箱 <span class="subst">&#123;recipient&#125;</span> 发送邮件...&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;正文: <span class="subst">&#123;content&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="comment"># 第三部分：核心业务高层模块（高层依赖抽象）</span></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NotificationService</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;业务通知服务（高层模块）。</span></span><br><span class="line"><span class="string">    它负责整体的业务逻辑，但它【完全不知道】具体是用短信还是邮件发送。</span></span><br><span class="line"><span class="string">    它只知道自己手里有一个符合 MessageSender 规范的工具。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, sender: MessageSender</span>):</span><br><span class="line">        <span class="comment"># 核心：这里接收的是一个抽象接口的实例（依赖注入）</span></span><br><span class="line">        <span class="variable language_">self</span>.sender = sender</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_order_success_notification</span>(<span class="params">self, user_contact: <span class="built_in">str</span>, order_id: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="comment"># 编写核心业务逻辑</span></span><br><span class="line">        message_content = <span class="string">f&quot;您的订单 <span class="subst">&#123;order_id&#125;</span> 已支付成功，感谢您的光临！&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;--- 业务层：开始处理订单通知逻辑 ---&quot;</span>)</span><br><span class="line">        <span class="comment"># 直接调用抽象定义的 send 方法，根本不需要管它是发短信还是发邮件</span></span><br><span class="line">        success = <span class="variable language_">self</span>.sender.send(recipient=user_contact, content=message_content)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> success:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;--- 业务层：通知发送成功记录日志 ---\n&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;--- 业务层：通知发送失败，触发重试 ---\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="comment"># 第四部分：未来的扩展（在不修改高层业务的前提下）</span></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 两年后，公司全面转向“飞书/钉钉”办公，需要加一个飞书机器人的通知渠道</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LarkBotSender</span>(<span class="title class_ inherited__">MessageSender</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;新扩展的飞书机器人发送渠道（低层细节）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send</span>(<span class="params">self, recipient: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[飞书机器人] 正在向群聊 ID <span class="subst">&#123;recipient&#125;</span> 推送 Webhook 消息...&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;卡片内容: <span class="subst">&#123;content&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="comment"># 运行演示</span></span><br><span class="line"><span class="comment"># ==========================================</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 场景 1：今天运营想用【短信】通知客户</span></span><br><span class="line">    sms_tool = SmsSender()</span><br><span class="line">    <span class="comment"># 把短信工具注入到服务中</span></span><br><span class="line">    service_v1 = NotificationService(sender=sms_tool)</span><br><span class="line">    service_v1.send_order_success_notification(<span class="string">&quot;138-8888-8888&quot;</span>, <span class="string">&quot;ORD20260720&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 场景 2：明天运营嫌短信太贵，想改成【邮件】通知客户</span></span><br><span class="line">    <span class="comment"># 高层的 NotificationService 类不需要改动任何一行代码！</span></span><br><span class="line">    email_tool = EmailSender()</span><br><span class="line">    service_v2 = NotificationService(sender=email_tool)</span><br><span class="line">    service_v2.send_order_success_notification(<span class="string">&quot;boss@company.com&quot;</span>, <span class="string">&quot;ORD20260720&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 场景 3：新扩展测试，将通知直接发到【飞书群】</span></span><br><span class="line">    <span class="comment"># 证明了高层模块与底层发送技术完全解耦</span></span><br><span class="line">    lark_tool = LarkBotSender()</span><br><span class="line">    service_v3 = NotificationService(sender=lark_tool)</span><br><span class="line">    service_v3.send_order_success_notification(<span class="string">&quot;chat_999a888b&quot;</span>, <span class="string">&quot;ORD20260720&quot;</span>)</span><br></pre></td></tr></table></figure></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://jiaklop9.github.io">jiaklop9</a></span></div><div class="post-copyright__type"></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://jiaklop9.github.io" target="_blank">jiaklop9</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计原则</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/" title="策略模式2"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">策略模式2</div></div><div class="info-2"><div class="info-item-1">今天我们来聊一个在消除复杂业务分支、提升代码可扩展性方面立竿见影的经典行为型模式——策略模式（Strategy Pattern）。 Day 4：策略模式 (Strategy Pattern)1. 它是怎么来的？在日常开发中，我们经常需要根据不同的条件执行不同的业务逻辑。比如你正在开发一个电商系统的购物车结算模块，最初只有“普通会员”不打折： 123def calculate_price(price, user_level):    if user_level == &quot;normal&quot;:        return price 随着业务发展，运营同学提出了各种花式促销：黄金会员打 9 折，白金会员打 8 折，双十一满 300 减 50，618 还有限时秒杀……于是你的代码变成了这样： 123456789if user_level == &quot;normal&quot;:    return priceelif user_level == &quot;gold&quot;:    return price * 0.9elif user_level ==...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">jiaklop9</div><div class="author-info-description">白日放歌须纵酒，青春作伴好还乡</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">41</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jiaklop9"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E5%8E%9F%E5%88%99%EF%BC%88Dependency-Inversion-Principle-DIP%EF%BC%89%EF%BC%9F"><span class="toc-text">什么是依赖倒转原则（Dependency Inversion Principle, DIP）？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%83%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%EF%BC%9F"><span class="toc-text">它是怎么来的？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%83%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8%EF%BC%9F%EF%BC%88%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E5%AE%83%EF%BC%89"><span class="toc-text">它有什么用？（为什么要用它）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="toc-text">有什么优缺点？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="toc-text">优点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9%EF%BC%9A"><span class="toc-text">缺点：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Python-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-text">Python 代码示例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B%EF%BC%88%E7%81%AF%E6%B3%A1%E4%B8%8E%E5%BC%80%E5%85%B3%EF%BC%89"><span class="toc-text">示例 1：简单示例（灯泡与开关）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E8%BF%9D%E5%8F%8D-DIP-%E7%9A%84%E5%81%9A%E6%B3%95"><span class="toc-text">❌ 违反 DIP 的做法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%B5%E5%BE%AA-DIP-%E7%9A%84%E5%81%9A%E6%B3%95%EF%BC%88%E6%AD%A3%E7%A1%AE%E7%A4%BA%E8%8C%83%EF%BC%89"><span class="toc-text">遵循 DIP 的做法（正确示范）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9A%E5%A4%8D%E6%9D%82%E7%A4%BA%E4%BE%8B%EF%BC%88%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="toc-text">示例 2：复杂示例（通知推送系统）</span></a></li></ol></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" title="依赖倒转设计原则">依赖倒转设计原则</a><time datetime="2026-07-20T01:51:08.000Z" title="发表于 2026-07-20 09:51:08">2026-07-20</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/%E4%BE%9D%E8%B5%96%E5%80%92%E8%BD%AC%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" title="依赖倒转设计原则">依赖倒转设计原则</a><time datetime="2026-07-20T01:51:08.000Z" title="发表于 2026-07-20 09:51:08">2026-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/17/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F2/" title="策略模式2">策略模式2</a><time datetime="2026-07-17T01:33:32.000Z" title="发表于 2026-07-17 09:33:32">2026-07-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="抽象工厂模式">抽象工厂模式</a><time datetime="2026-07-16T09:22:08.000Z" title="发表于 2026-07-16 17:22:08">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" title="工厂模式">工厂模式</a><time datetime="2026-07-16T09:10:39.000Z" title="发表于 2026-07-16 17:10:39">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例设计模式">单例设计模式</a><time datetime="2026-07-16T07:05:01.000Z" title="发表于 2026-07-16 15:05:01">2026-07-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2026 By jiaklop9</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liSE7OgVkzZHDSYt',
+      clientSecret: '62cd9adcbef8e1195df927bea340438557e497d8',
+      repo: 'jiaklop9.github.io.gitalk',
+      owner: 'jiaklop9',
+      admin: ['jiaklop9'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '731206682c24ce3053d545979d7cc437'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
